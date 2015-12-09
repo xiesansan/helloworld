@@ -1,14 +1,29 @@
 
-SRC_PATH=./src/
-BIN_PATH=./bin/
-TARGET = ${BIN_PATH}/helloworld
-OBJECTS = ${SRC_PATH}/helloworld.o ${SRC_PATH}/api.o
+SRC_PATH=./src
+BIN_PATH=./bin
+BIN_FILE=helloworld
+
+SOURCE := $(wildcard ./*.c)
+SOURCE += $(wildcard ${SRC_PATH}/*.c)
+OBJECTS = $(patsubst %.c,%.o,$(SOURCE))
+
+TARGET = ${BIN_PATH}/${BIN_FILE}
+
+CC = gcc
+CFLAGS = -g -Wall
+
+
+## set .c .h search path
+## VPATH=${SRC_PATH}:${SRC_PATH}/include/
+vpath %.h ${SRC_PATH}
+vpath %.c ${SRC_PATH}
+
 ${TARGET}:${OBJECTS}
-	cc -g -o ${TARGET} ${OBJECTS} 
-	@echo "make success"
+	${CC} -o ${TARGET} ${OBJECTS} 
+	@echo "make ${BIN_FILE} success"
 
-${OBJECTS}:${SRC_PATH}/api.h
-
+$(OBJECTS): %.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
 
 clean:
 	rm ${OBJECTS}
